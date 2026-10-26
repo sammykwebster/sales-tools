@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEDDICC Scorecard</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #222; margin: 40px auto; max-width: 860px; padding: 0 16px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .deal { color: #666; font-size: 14px; margin-bottom: 20px; }
+  .deal a { color: inherit; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { border-bottom: 1px solid #e5e5e5; padding: 8px; text-align: left; vertical-align: middle; }
+  th { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  td.letter { font-weight: 700; width: 24px; }
+  td.element { width: 160px; }
+  td.score { width: 70px; }
+  select { padding: 4px; font-size: 14px; }
+  input[type=text] { width: 100%; box-sizing: border-box; padding: 6px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; }
+  tfoot td { font-weight: 700; border-bottom: none; padding-top: 14px; }
+  .flag { display: inline-block; padding: 4px 12px; border-radius: 12px; color: #fff; font-size: 13px; }
+  .red { background: #d93025; }
+  .amber { background: #f29900; }
+  .green { background: #188038; }
+</style>
+</head>
+<body>
+<h1>MEDDICC Scorecard</h1>
+<div class="deal">Itaú Unibanco (NYSE: ITUB) &middot; Devin bank-wide expansion &middot; Closed won &middot; Source: <a href="https://devin.ai/customers/itau">devin.ai/customers/itau</a></div>
+
+<table>
+  <thead>
+    <tr><th></th><th>Element</th><th>Score</th><th>Notes</th></tr>
+  </thead>
+  <tbody id="rows"></tbody>
+  <tfoot>
+    <tr>
+      <td></td>
+      <td>Total</td>
+      <td id="total"></td>
+      <td><span id="flag" class="flag"></span></td>
+    </tr>
+  </tfoot>
+</table>
+
+<script>
+  const data = [
+    ["M", "Metrics", 5, "20-30% throughput increase; 10-15% cycle time reduction"],
+    ["E", "Economic Buyer", 5, "CTO Carlos Eduardo Mazzei: \"Devin is an important strategic investment\""],
+    ["D", "Decision Criteria", 4, "Full-adoption squad: 2 releases in 3 months, double plan"],
+    ["D", "Decision Process", 4, "A/B test, then full-commit squad; bank-wide after 9 months"],
+    ["P", "Paper Process", 3, "Not disclosed; expansion to all tech staff signed"],
+    ["I", "Identify Pain", 5, "CNPJ compliance across 300,000+ repos incl. COBOL"],
+    ["C", "Champion", 5, "Roberto Frossard, Head of ICTi; ~1,000-dev waitlist"],
+    ["C", "Competition", 4, "\"Most other products struggle\" with codebase context"]
+  ];
+
+  const rows = document.getElementById("rows");
+  data.forEach(([letter, element, score, note]) => {
+    const options = [1, 2, 3, 4, 5]
+      .map(n => `<option${n === score ? " selected" : ""}>${n}</option>`).join("");
+    rows.insertAdjacentHTML("beforeend",
+      `<tr>
+        <td class="letter">${letter}</td>
+        <td class="element">${element}</td>
+        <td class="score"><select>${options}</select></td>
+        <td><input type="text" value="${note.replace(/"/g, "&quot;")}"></td>
+      </tr>`);
+  });
+
+  function update() {
+    const total = [...rows.querySelectorAll("select")].reduce((sum, s) => sum + Number(s.value), 0);
+    document.getElementById("total").textContent = `${total} / 40`;
+    const [label, cls] = total >= 36 ? ["Green", "green"] : total >= 24 ? ["Amber", "amber"] : ["Red", "red"];
+    const flag = document.getElementById("flag");
+    flag.textContent = label;
+    flag.className = `flag ${cls}`;
+  }
+
+  rows.addEventListener("change", update);
+  update();
+</script>
+</body>
+</html>
