@@ -70,7 +70,7 @@
   function update() {
     const total = [...rows.querySelectorAll("select")].reduce((sum, s) => sum + Number(s.value), 0);
     document.getElementById("total").textContent = `${total} / 40`;
-    const [label, cls] = total >= 32 ? ["Green", "green"] : total >= 24 ? ["Amber", "amber"] : ["Red", "red"];
+    const [label, cls] = total >= 36 ? ["Green", "green"] : total >= 24 ? ["Amber", "amber"] : ["Red", "red"];
     const flag = document.getElementById("flag");
     flag.textContent = label;
     flag.className = `flag ${cls}`;
