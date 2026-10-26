@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devin ROI Calculator: Traditional Bank</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #222; margin: 40px auto; max-width: 860px; padding: 0 16px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #555; margin: 32px 0 8px; }
+  .sub { color: #666; font-size: 14px; margin-bottom: 8px; }
+  .sub a { color: inherit; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { border-bottom: 1px solid #e5e5e5; padding: 8px; text-align: left; vertical-align: middle; }
+  th { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  td.val { width: 150px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; width: 160px; }
+  input[type=number] { width: 120px; padding: 6px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; white-space: nowrap; }
+  .story { background: #e6f4ea; color: #137333; }
+  .placeholder { background: #fef7e0; color: #b06000; border: 1px dashed #f29900; }
+  .src { color: #666; font-size: 12px; }
+  tr.total td { font-weight: 700; }
+  tr.headline td { font-weight: 700; font-size: 16px; border-bottom: none; }
+  .note { color: #888; font-size: 12px; margin-top: 8px; }
+  td.quote { color: #444; font-style: italic; }
+</style>
+</head>
+<body>
+<h1>Devin ROI Calculator: Traditional Bank</h1>
+<div class="sub">Sample data: Itaú Unibanco (NYSE: ITUB). Source: <a href="https://devin.ai/customers/itau">devin.ai/customers/itau</a> customer story</div>
+<div class="sub">
+  <span class="tag story">Customer story</span> figure from the Itaú customer story page &nbsp;
+  <span class="tag placeholder">Placeholder</span> assumption, not in the story. Replace with Cognition banking averages or the prospect's own data
+</div>
+
+<h2>Inputs</h2>
+<table>
+  <thead><tr><th>Input</th><th>Value</th><th>Source</th></tr></thead>
+  <tbody id="inputs"></tbody>
+</table>
+
+<h2>Annual results</h2>
+<table>
+  <tbody id="results"></tbody>
+</table>
+<div class="note">Capacity value is engineering time freed up (a 20% throughput gain frees 1/6 of the time for the same work), valued at what it costs. It is not a cash saving. The three benefit lines can overlap.</div>
+
+<h2>Customer story figures</h2>
+<table>
+  <thead><tr><th>Figure</th><th>Exact sentence from the customer story</th></tr></thead>
+  <tbody id="sources"></tbody>
+</table>
+
+<script>
+  const STORY = "Customer story", PLACEHOLDER = "Placeholder";
+
+  const inputs = [
+    { id: "engineers", label: "Tech staff in scope", value: 17000, unit: "",
+      source: STORY, detail: "Over 17,000 people working in tech" },
+    { id: "adoption", label: "Staff actively using Devin", value: 75, unit: "%",
+      source: PLACEHOLDER, detail: "Story says 75% of teams, not individuals. Assumed equal" },
+    { id: "throughput", label: "Throughput increase", value: 20, unit: "%",
+      source: STORY, detail: "20-30% increase in throughput (low end used)" },
+    { id: "migrationReduction", label: "Migration cost reduction", value: 80, unit: "%",
+      source: STORY, detail: "5x lower cost on .NET → Java migration (= 80% less)" },
+    { id: "autoRemediated", label: "Vulnerabilities auto-resolved", value: 70, unit: "%",
+      source: STORY, detail: "~70% of vulnerabilities resolved automatically" },
+    { id: "engineerCost", label: "Fully loaded cost per engineer / year", value: 120000, unit: "$",
+      source: PLACEHOLDER, detail: "Blended global bank onshore/offshore cost" },
+    { id: "hoursPerYear", label: "Working hours per engineer / year", value: 1800, unit: "",
+      source: PLACEHOLDER, detail: "Used to derive the hourly rate" },
+    { id: "migrationSpend", label: "Annual migration & modernisation spend", value: 10000000, unit: "$",
+      source: PLACEHOLDER, detail: "Legacy (.NET, COBOL, SQL Server) modernisation budget" },
+    { id: "findings", label: "Security findings / year", value: 20000, unit: "",
+      source: PLACEHOLDER, detail: "SonarQube / Fortify / Veracode findings" },
+    { id: "hoursPerFinding", label: "Engineer hours per finding", value: 2, unit: "",
+      source: PLACEHOLDER, detail: "Average manual remediation effort" },
+    { id: "devinCost", label: "Devin cost per active engineer / year", value: 2400, unit: "$",
+      source: PLACEHOLDER, detail: "Enterprise pricing is custom. Replace with the quote" }
+  ];
+
+  const sources = [
+    ["17,000+ tech staff; US$500B assets; 70M+ customers; 18 countries",
+     "Itaú Unibanco is Brazil's largest bank with estimated US$ 500B in assets, over 70 million customers, operations across 18 countries, and one of the largest engineering organizations in Latin America, with over 17,000 people working in tech."],
+    ["20-30% throughput; 10-15% cycle time",
+     "Across the bank, Itaú saw a 20-30% increase in throughput and 10-15% reduction in cycle time, with outsized impact in the use cases below."],
+    ["75% of teams",
+     "Today, 75% of teams use Devin."],
+    ["~1,000-developer waitlist in 5 months",
+     "Within five months, demand grew so rapidly that a waitlist of nearly 1,000 developers formed."],
+    ["Bank-wide expansion after 9 months",
+     "Nine months later, Itaú and Cognition partnered to expand Devin to everyone working with technology at the bank."],
+    ["2 releases in 3 months (2x plan)",
+     "One squad adopted Devin broadly across their workflow and delivered two releases in three months - double what had originally been planned."],
+    ["6x less time, 5x lower cost (59 .NET services)",
+     "By using Devin, the project was completed in 6x less time, weeks instead of months, at 5x lower cost and with a more efficient roadmap and simpler long-term architecture."],
+    ["59 services consolidated into 9",
+     "Devin analyzed the .NET services, generated Java equivalents aligned to Itaú's architecture standards, and consolidated them into just 9 services."],
+    ["800 SQL Server objects, 5x faster",
+     "One team's SQL Server migration - covering 800 database objects across stored procedures - was completed 5x faster."],
+    ["300,000+ repos (CNPJ compliance)",
+     "New regulations required adding alphanumeric support to tax IDs across hundreds of thousands of files in 300,000+ repositories, including COBOL and other legacy stacks."],
+    ["300,000+ repos documented",
+     "Documentation for a 300,000+ -repo codebase generated and continuously updated."],
+    ["~70% vulnerabilities auto-resolved",
+     "Now, ~70% of vulnerabilities are resolved automatically, clearing historical backlogs and reducing security risk."],
+    ["Test coverage <50% to ~90+%",
+     "Test coverage increased from <50% to ~90+%."],
+    ["~10x faster architecture design",
+     "Principal engineers design architecture ~10x faster using Devin."],
+    ["~10x faster context gathering",
+     "What previously took hours of meetings and context gathering now can takes minutes - around 10x faster in some of the most expressive cases."],
+    ["Architecture proposal in 10-15 minutes",
+     "In 10–15 minutes, I have a complete architecture proposal I can walk into a meeting with."],
+    ["Frontend shipped within 1 day",
+     "Given a written spec, Devin built the UI, integrated existing APIs, added validation and tests, completed reviews, and shipped the feature within one day."],
+    ["5 likely failure points (incident)",
+     "In one incident, after engineers hit dead ends, Devin analyzed the legacy codebase, proposed five likely failure points, and guided the fix."]
+  ];
+
+  const usd = n => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString("en-US");
+  const tag = s => `<span class="tag ${s === STORY ? "story" : "placeholder"}">${s}</span>`;
+
+  document.getElementById("inputs").innerHTML = inputs.map(i => `
+    <tr>
+      <td>${i.label}${i.unit === "%" ? " (%)" : i.unit === "$" ? " (US$)" : ""}</td>
+      <td class="val"><input type="number" id="${i.id}" value="${i.value}" min="0"></td>
+      <td>${tag(i.source)} <span class="src">${i.detail}</span></td>
+    </tr>`).join("");
+
+  document.getElementById("sources").innerHTML = sources.map(([fig, quote]) =>
+    `<tr><td>${fig}</td><td class="quote">"${quote}"</td></tr>`).join("");
+
+  function update() {
+    const v = Object.fromEntries(inputs.map(i => {
+      const el = document.getElementById(i.id);
+      if (Number(el.value) < 0) el.value = 0;
+      return [i.id, Number(el.value) || 0];
+    }));
+    const activeEngineers = v.engineers * v.adoption / 100;
+    const hourlyRate = v.hoursPerYear ? v.engineerCost / v.hoursPerYear : 0;
+
+    const deployed = activeEngineers > 0 ? 1 : 0;
+    const freedTime = v.throughput / (100 + v.throughput);
+
+    const capacity = activeEngineers * v.engineerCost * freedTime;
+    const migration = deployed * v.migrationSpend * v.migrationReduction / 100;
+    const security = deployed * v.findings * v.autoRemediated / 100 * v.hoursPerFinding * hourlyRate;
+    const benefit = capacity + migration + security;
+    const cost = activeEngineers * v.devinCost;
+    const net = benefit - cost;
+    const roi = cost ? net / cost * 100 : 0;
+    const payback = benefit ? cost / (benefit / 12) : 0;
+
+    const rows = [
+      ["Active Devin users", Math.round(activeEngineers).toLocaleString("en-US")],
+      ["Capacity value from throughput", usd(capacity)],
+      ["Migration savings", usd(migration)],
+      ["Security remediation savings", usd(security)],
+      ["Total annual benefit", usd(benefit), "total"],
+      ["Annual Devin investment", usd(cost)],
+      ["Net annual benefit", usd(net), "total"],
+      ["ROI", cost ? `${Math.round(roi).toLocaleString("en-US")}%` : "n/a", "headline"],
+      ["Payback", benefit > 0 ? `${payback.toFixed(1)} months` : "n/a", "headline"]
+    ];
+    document.getElementById("results").innerHTML = rows.map(([label, value, cls]) =>
+      `<tr class="${cls || ""}"><td>${label}</td><td class="num">${value}</td></tr>`).join("");
+  }
+
+  document.getElementById("inputs").addEventListener("input", update);
+  update();
+</script>
+</body>
+</html>
