@@ -133,7 +133,7 @@
     `<tr><td>${fig}</td><td class="quote">"${quote}"</td></tr>`).join("");
 
   function update() {
-    const v = Object.fromEntries(inputs.map(i => [i.id, Number(document.getElementById(i.id).value) || 0]));
+    const v = Object.fromEntries(inputs.map(i => [i.id, Math.max(0, Number(document.getElementById(i.id).value) || 0)]));
     const activeEngineers = v.engineers * v.adoption / 100;
     const hourlyRate = v.hoursPerYear ? v.engineerCost / v.hoursPerYear : 0;
 
