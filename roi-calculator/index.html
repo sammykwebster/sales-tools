@@ -158,7 +158,7 @@
       ["Annual Devin investment", usd(cost)],
       ["Net annual benefit", usd(net), "total"],
       ["ROI", cost ? `${Math.round(roi).toLocaleString("en-US")}%` : "n/a", "headline"],
-      ["Payback", benefit > cost ? `${payback.toFixed(1)} months` : "n/a", "headline"]
+      ["Payback", benefit > 0 ? `${payback.toFixed(1)} months` : "n/a", "headline"]
     ];
     document.getElementById("results").innerHTML = rows.map(([label, value, cls]) =>
       `<tr class="${cls || ""}"><td>${label}</td><td class="num">${value}</td></tr>`).join("");
