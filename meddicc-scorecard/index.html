@@ -8,6 +8,7 @@
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #222; margin: 40px auto; max-width: 860px; padding: 0 16px; }
   h1 { font-size: 20px; margin: 0 0 4px; }
   .deal { color: #666; font-size: 14px; margin-bottom: 20px; }
+  .deal a { color: inherit; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   th, td { border-bottom: 1px solid #e5e5e5; padding: 8px; text-align: left; vertical-align: middle; }
   th { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
@@ -25,7 +26,7 @@
 </head>
 <body>
 <h1>MEDDICC Scorecard</h1>
-<div class="deal">Acme Corp &middot; Platform Expansion &middot; $120k ARR &middot; Close Q4</div>
+<div class="deal">Itaú Unibanco (NYSE: ITUB) &middot; Devin bank-wide expansion &middot; Closed won &middot; Source: <a href="https://devin.ai/customers/itau">devin.ai/customers/itau</a></div>
 
 <table>
   <thead>
@@ -44,14 +45,14 @@
 
 <script>
   const data = [
-    ["M", "Metrics", 4, "Target 30% reduction in onboarding time"],
-    ["E", "Economic Buyer", 2, "CFO identified, not yet met"],
-    ["D", "Decision Criteria", 4, "Security, SSO, API access"],
-    ["D", "Decision Process", 3, "IT review then exec sign-off"],
-    ["P", "Paper Process", 2, "Legal and procurement steps unclear"],
-    ["I", "Identify Pain", 5, "Manual reporting costs 20 hrs/week"],
-    ["C", "Champion", 4, "Head of Ops, actively selling internally"],
-    ["C", "Competition", 3, "Competitor X in late-stage eval"]
+    ["M", "Metrics", 5, "20-30% throughput increase; 10-15% cycle time reduction"],
+    ["E", "Economic Buyer", 5, "CTO Carlos Eduardo Mazzei: \"Devin is an important strategic investment\""],
+    ["D", "Decision Criteria", 4, "Full-adoption squad: 2 releases in 3 months, double plan"],
+    ["D", "Decision Process", 4, "A/B test, then full-commit squad; bank-wide after 9 months"],
+    ["P", "Paper Process", 3, "Not disclosed; expansion to all tech staff signed"],
+    ["I", "Identify Pain", 5, "CNPJ compliance across 300,000+ repos incl. COBOL"],
+    ["C", "Champion", 5, "Roberto Frossard, Head of ICTi; ~1,000-dev waitlist"],
+    ["C", "Competition", 4, "\"Most other products struggle\" with codebase context"]
   ];
 
   const rows = document.getElementById("rows");
@@ -63,7 +64,7 @@
         <td class="letter">${letter}</td>
         <td class="element">${element}</td>
         <td class="score"><select>${options}</select></td>
-        <td><input type="text" value="${note}"></td>
+        <td><input type="text" value="${note.replace(/"/g, "&quot;")}"></td>
       </tr>`);
   });
 
